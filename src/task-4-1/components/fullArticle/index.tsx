@@ -1,14 +1,11 @@
 import { Button } from "react-bootstrap";
 
-interface idArticle {
-  id: string;
-}
 
-export const FullPost = ({ id }: idArticle) => {
+export const FullPost = () => {
   const dummyText = "Lorem ipsum dolor".repeat(20);
   return (
     <div className="full-post">
-      <h1>Article №{id}</h1>
+      <h1>Article №{5}</h1>
       <img src="https://source.unsplash.com/400x400" alt="Article" />
       <p>{dummyText}</p>
       <a href="/">
