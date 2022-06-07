@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { posts } from "../../pages/home";
 
 interface postInterface {
-  id: number;
+  id?: number;
   imageUrl: string;
   title: string;
   text: string;
