@@ -10,7 +10,7 @@ export const Header = () => {
   useEffect(() => {
     if (localStorage.getItem("token")) {
       setIsLogin(true);
-    }else{
+    } else {
       setIsLogin(false);
     }
   }, [pathname]);
