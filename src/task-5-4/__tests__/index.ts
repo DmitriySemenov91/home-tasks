@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { Form } from "../index";
+import { Form } from "../steps/step-one";
 import user from "@testing-library/user-event";
 
 describe("Form initialize", () => {
@@ -57,7 +57,7 @@ describe("Form functionality", () => {
     const EMAIL = "ddd@gmail3com";
     const PASS = "asdfghQ";
 
-    const errorMessages = "This field is required"
+    const errorMessages = "This field is required";
 
     render(<Form />);
 
@@ -76,7 +76,7 @@ describe("Form functionality", () => {
     const submitButton = screen.getByText(/submit/i);
     fireEvent.click(submitButton);
 
-    expect(await screen.findAllByText(errorMessages)).toHaveLength(4)
-    screen.debug()
+    expect(await screen.findAllByText(errorMessages)).toHaveLength(4);
+    screen.debug();
   });
 });

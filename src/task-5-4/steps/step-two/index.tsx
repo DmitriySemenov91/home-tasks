@@ -1,38 +1,30 @@
-import React, { useState } from "react";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 // MUI
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
-import SendIcon from "@mui/icons-material/Send";
+import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 
 // form
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { FormSchema } from "./index.schema";
+
+// types
+import { IProps } from "../../types";
 
 interface Inputs {
-  firstName: string;
-  secondName: string;
-  email: string;
-  password: string;
+  firstName1: string;
+  secondName1: string;
+  email1: string;
+  password1: string;
 }
 
-export const Form: React.FC<{}> = () => {
-  const [showDate, setShowDate] = useState<Inputs>({
-    firstName: "",
-    secondName: "",
-    email: "",
-    password: "",
-  });
-
-  // patterns for email and password fields
-
-  // work example --> ddd@gmail.com
-  const emailFormat =
-    /^[a-zA-Z0-9_.+]+(?<!^[0-9])@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
-
-  // Minimum eight characters, at least one uppercase letter, one lowercase letter and one number
-  // asdfghQ1
-  const passwordFormat = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+export const StepTwo: React.FC<IProps> = ({ nextStep, setFormValues }) => {
+  const navigate = useNavigate();
 
   // react-hook-form variant form
   const {
@@ -40,14 +32,19 @@ export const Form: React.FC<{}> = () => {
     formState: { errors },
     control,
     reset,
-  } = useForm<Inputs>();
+  } = useForm<Inputs>({ resolver: yupResolver(FormSchema) });
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    setShowDate(data);
+    if (setFormValues) {
+      setFormValues((prev) => {
+        return { ...prev, ...data };
+      });
+    }
     reset();
+    if (nextStep) {
+      nextStep("/three");
+    }
   };
-
-  const isEmpty = !Object.values(showDate).some(x => ( x !== ''));
 
   return (
     <>
@@ -65,12 +62,12 @@ export const Form: React.FC<{}> = () => {
                     {...field}
                   />
                 )}
-                name="firstName"
+                name="firstName1"
                 control={control}
                 defaultValue=""
-                rules={{ required: true, maxLength: 10 }}
+                // rules={{ required: true, maxLength: 10 }}
               />
-              {errors.firstName && <span>This field is required</span>}
+              <p>{errors.firstName1?.message}</p>
             </div>
             <div className="formItem">
               <Controller
@@ -78,17 +75,17 @@ export const Form: React.FC<{}> = () => {
                   <TextField
                     variant="outlined"
                     fullWidth
-                    label="secondName"
-                    placeholder="secondName"
+                    label="secondName1"
+                    placeholder="secondName1"
                     {...field}
                   />
                 )}
-                name="secondName"
+                name="secondName1"
                 control={control}
                 defaultValue=""
-                rules={{ required: true, maxLength: 20 }}
+                // rules={{ required: true, maxLength: 20 }}
               />
-              {errors.secondName && <span>This field is required</span>}
+              <p>{errors.secondName1?.message}</p>
             </div>
           </div>
           <div className="formWrapper">
@@ -98,17 +95,17 @@ export const Form: React.FC<{}> = () => {
                   <TextField
                     variant="outlined"
                     fullWidth
-                    label="email"
-                    placeholder="email"
+                    label="email1"
+                    placeholder="email1"
                     {...field}
                   />
                 )}
-                name="email"
+                name="email1"
                 control={control}
                 defaultValue=""
-                rules={{ required: true, pattern: emailFormat }}
+                // rules={{ required: true, pattern: emailFormat }}
               />
-              {errors.email && <span>This field is required</span>}
+              <p>{errors.email1?.message}</p>
             </div>
             <div className="formItem">
               <Controller
@@ -116,29 +113,30 @@ export const Form: React.FC<{}> = () => {
                   <TextField
                     variant="outlined"
                     fullWidth
-                    label="password"
-                    placeholder="password"
+                    label="password1"
+                    placeholder="password1"
                     {...field}
                   />
                 )}
-                name="password"
+                name="password1"
                 control={control}
                 defaultValue=""
-                rules={{ required: true, pattern: passwordFormat }}
+                // rules={{ required: true, pattern: passwordFormat }}
               />
-              {errors.password && <span>This field is required</span>}
+              {/*{errors.password && <span>This field is required</span>}*/}
+              <p>{errors.password1?.message}</p>
             </div>
           </div>
           <div className="formWrapper">
             <span className="button">
               <Button
-                type="submit"
+                onClick={() => navigate(-1)}
                 variant="contained"
-                color="primary"
-                endIcon={<SendIcon />}
-                name="submit"
+                color="info"
+                startIcon={<NavigateBeforeIcon />}
+                name="previous step"
               >
-                Submit
+                Previous step
               </Button>
             </span>
             <span className="button">
@@ -153,18 +151,20 @@ export const Form: React.FC<{}> = () => {
                 Clean
               </Button>
             </span>
+            <span className="button">
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                endIcon={<NavigateNextIcon />}
+                name="third step"
+              >
+                Next Step
+              </Button>
+            </span>
           </div>
         </form>
       </>
-      <br />
-      {!isEmpty && (
-        <div>
-          <div>User Name: {showDate.firstName}</div>
-          <div>User SecondName: {showDate.secondName}</div>
-          <div>User E-mail: {showDate.email}</div>
-          <div>User Password: {showDate.password}</div>
-        </div>
-      )}
     </>
   );
 };
