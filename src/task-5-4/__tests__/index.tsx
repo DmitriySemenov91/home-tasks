@@ -1,23 +1,28 @@
-import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { Form } from "../steps/step-one";
+import { BrowserRouter } from "react-router-dom";
+import { MultiStepForm } from "../steps";
 import user from "@testing-library/user-event";
+import userEvent from "@testing-library/user-event";
 
-describe("Form initialize", () => {
-  test("should render the basic fields", () => {
-    render(<Form />);
+describe("<MultiStepForm />", () => {
+  test("it should render the fields in first step", () => {
+    render(
+      <BrowserRouter>
+        <MultiStepForm />
+      </BrowserRouter>
+    );
+    userEvent.click(screen.getByRole("button", { name: /First Step/i }));
+    expect(screen.getByPlaceholderText(/firstName/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/secondName/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/email/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/password/i)).toBeInTheDocument();
     expect(
-      screen.getByRole("input", { name: /firstName/i })
+      screen.getByRole("button", { name: /Welcome step/i })
     ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Clean/i })).toBeInTheDocument();
     expect(
-      screen.getByRole("input", { name: /secondName/i })
+      screen.getByRole("button", { name: /Next step/i })
     ).toBeInTheDocument();
-    expect(screen.getByRole("input", { name: /email/i })).toBeInTheDocument();
-    expect(
-      screen.getByRole("input", { name: /password/i })
-    ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /submit/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /reset/i })).toBeInTheDocument();
   });
 });
 
@@ -28,7 +33,8 @@ describe("Form functionality", () => {
     const EMAIL = "ddd@gmail.com";
     const PASS = "asdfghQ1";
 
-    render(<Form />);
+    render(<MultiStepForm />);
+    userEvent.click(screen.getByRole("button", { name: /First Step/i }));
 
     const userName = screen.getByLabelText("firstName");
     user.type(userName, USER_NAME);
@@ -42,8 +48,8 @@ describe("Form functionality", () => {
     const password = screen.getByLabelText("password");
     user.type(password, PASS);
 
-    const submitButton = screen.getByText(/submit/i);
-    fireEvent.click(submitButton);
+    const submitButton = screen.getByRole("button", { name: /Next step/i });
+    userEvent.click(submitButton);
 
     expect(await screen.findByText(/User Name/i)).toBeInTheDocument();
     expect(await screen.findByText(/User SecondName/i)).toBeInTheDocument();
@@ -59,7 +65,7 @@ describe("Form functionality", () => {
 
     const errorMessages = "This field is required";
 
-    render(<Form />);
+    render(<MultiStepForm />);
 
     const userName = screen.getByLabelText("firstName");
     user.type(userName, USER_NAME);
